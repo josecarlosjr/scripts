@@ -137,12 +137,12 @@ class SimpleSwitch13(simple_switch_13.SimpleSwitch13):
                     ev.msg.datapath.id, stat.port_no,
                     stat.rx_bytes, stat.tx_bytes, band)
             
-            if stat.port_no == 4 and tx_ini == 0:#Se o numero da porta for 3 e os bytes iniciais forem 0
+            if stat.port_no == 3 and tx_ini == 0:#Se o numero da porta for 3 e os bytes iniciais forem 0
                 tx_ini = stat.tx_bytes #valor inicial bytes armazenado
                 print colored('tx_ini','blue')
                 print(tx_ini)
 
-            if stat.port_no == 4 and t < 59:
+            if stat.port_no == 3 and t == 59:
                 tx_fin = stat.tx_bytes
                 #band = (tx_fin - tx_ini)*8/60
                 #band = (tx_fin - tx_ini)*int(8/1048576)
