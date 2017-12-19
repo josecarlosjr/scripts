@@ -148,7 +148,7 @@ class SimpleSwitch13(simple_switch_13.SimpleSwitch13):
                 band = (tx_fin - tx_ini) * 8 / 60
                 result = int(band/1048576)
 		tx_ini = tx_fin
-	if result > 8:
+	if result > 56:
 	    #self.send_port_mod(ev.msg.datapath)
 	    self.send_flow_mod1(ev.msg.datapath)
 	    print colored('regra aplicada','blue')	                
