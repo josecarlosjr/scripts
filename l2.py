@@ -144,17 +144,10 @@ class SimpleSwitch13(simple_switch_13.SimpleSwitch13):
                 tx_fin = stat.tx_bytes
                 # band = (tx_fin - tx_ini)*8/60
                 # band = (tx_fin - tx_ini)*int(8/1048576)
-                # print("%.3d" % band)
-                #print
-                # break
-                # if stat.port_no == 3 and t == 59:
                 # perc = band/157,286,400
                 band = (tx_fin - tx_ini) * 8 / 60
                 result = int(band/1048576)
-		#print colored('banda', 'blue')
-                #print(band)
-                # print((int(band/1048576)),  'Mbit/s')
-                tx_ini = tx_fin
+		tx_ini = tx_fin
 	if result > 8:
 	    #self.send_port_mod(ev.msg.datapath)
 	    self.send_flow_mod1(ev.msg.datapath)
