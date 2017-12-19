@@ -388,62 +388,11 @@ class SimpleMonitor13(SimpleSwitch13):  # heranÃ§a do simpleswitch13
         #        '-------- -------- -------- '
         #        '-------- -------- --------')
 
-        # for stat in sorted(body, key=attrgetter('port_no')):
-        # for stat in sorted(body, key=attrgetter('port_no')):
-        #    self.logger.info('%016x %8x %8d %8d %8d %8d',
-        #            ev.msg.datapath.id, stat.port_no,
-        #            stat.rx_packets, stat.rx_bytes,
-        #            stat.tx_packets, stat.tx_bytes)
-
-
-                # band = (tx_fin - tx_ini)*8/60
-                # band = (tx_fin - tx_ini)*int(8/1048576)
-                # print("%.3d" % band)
-                #print
-                # break
-                # if stat.port_no == 3 and t == 59:
-                # perc = band/157,286,400
-                #band = (tx_fin - tx_ini) * 8 / 60
-                #result = int(band/1048576)
-		#print colored('banda', 'blue')
-                #print(band)
-                # print((int(band/1048576)),  'Mbit/s')
+       
 
 
 
 
-    #@set_ev_cls(ofp_event.EventOFPFlowStatsReply, MAIN_DISPATCHER)
-    #def _flow_stats_reply_handler(self, ev):
-    #    body = ev.msg.body
-
-        #self.logger.info('datapath         '
-        #        'in-port  eth-dst           '
-        #        'out-port packets  bytes')
-        #self.logger.info('---------------- '
-        #        '-------- ----------------- '
-        #        '-------- -------- --------')
-        #for stat in sorted([flow for flow in body if flow.priority == 1], key=lambda flow: (flow.match['in_port'], flow.match['eth_dst'])):
-        #    self.logger.info('%016x %8x %17s %8x %8d %8d',
-        #            ev.msg.datapath.id,
-        #            stat.match['in_port'], stat.match['eth_dst'],
-        #            stat.instructions[0].actions[0].port,
-        #            stat.packet_count, stat.byte_count)
-
-    #@set_ev_cls(ofp_event.EventOFPPortStatsReply, MAIN_DISPATCHER)
-    #def _port_stats_reply_handler(self, ev):
-    #    body = ev.msg.body
-        #self.logger.info('datapath         port     '
-        #        'rx-pkts  rx-bytes '
-        #        'tx-pkts  tx-bytes')
-        #self.logger.info('---------------- -------- '
-        #        '-------- -------- -------- '
-        #        '-------- -------- --------')
-
-        #for stat in sorted(body, key=attrgetter('port_no')):
-        #for stat in sorted(body, key=attrgetter('port_no')):
-        #    self.logger.info('%016x %8x %8d %8d %8d %8d',
-        #            ev.msg.datapath.id, stat.port_no,
-        #            stat.rx_packets, stat.rx_bytes,
-        #            stat.tx_packets, stat.tx_bytes)
+   
 
 
