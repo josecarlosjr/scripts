@@ -142,7 +142,6 @@ def max_abw(abw, Q):
     r.append((dst, in_port, final_port))
     return r
 
-
 def minimum_distance(distance, Q):
     # print "minimum_distance() is called", " distance=", distance, " Q=", Q
     min = float('Inf')
