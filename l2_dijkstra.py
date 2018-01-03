@@ -41,7 +41,6 @@ from ryu.app.wsgi import ControllerBase
 from collections import defaultdict
 from ryu.lib import hub
 
-
 # switches
 myswitches = []
 
