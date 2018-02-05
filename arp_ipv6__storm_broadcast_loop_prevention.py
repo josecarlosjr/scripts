@@ -423,73 +423,114 @@ def _packet_in_handler(self, ev):
             out_port = ofproto.OFPP_FLOOD
 
 
-        actions = [parser.OFPActionOutput(out_port)]
-        # install a flow to avoid packet_in next time
-        if out_port != ofproto.OFPP_FLOOD:
-            match = parser.OFPMatch(in_port=in_port, eth_src=src, eth_dst=dst)
-
-        data = None
-        if msg.buffer_id == ofproto.OFP_NO_BUFFER:
-            data = msg.data
-
-        if out_port == ofproto.OFPP_FLOOD:
-            print "FLOOD"
-            while len(actions) > 0: actions.pop()
+    actions = [parser.OFPActionOutput(out_port)]
+    # install a flow to avoid packet_in next time
+    if out_port != ofproto.OFPP_FLOOD:
+        match = parser.OFPMatch(in_port=in_port, eth_src=src, eth_dst=dst)
+    
+    data = None
+    if msg.buffer_id == ofproto.OFP_NO_BUFFER:
+        data = msg.data
+        
+    if out_port == ofproto.OFPP_FLOOD:
+        print "FLOOD"
+        while len(actions) > 0: actions.pop()
             for i in range(1, 23):
                 actions.append(parser.OFPActionOutput(i))
             # print "actions=", actions
             out = parser.OFPPacketOut(datapath=datapath, buffer_id=msg.buffer_id,
-                              in_port=in_port, actions=actions, data=data)
+                                      in_port=in_port, actions=actions, data=data)
             datapath.send_msg(out)
-        else:
-            # print "unicast"
-            out = parser.OFPPacketOut(
-                datapath=datapath, buffer_id=msg.buffer_id, in_port=in_port,
-                actions=actions, data=data)
-            datapath.send_msg(out)
+    else:
+        # print "unicast"
+        out = parser.OFPPacketOut(
+            datapath=datapath, buffer_id=msg.buffer_id, in_port=in_port,
+            actions=actions, data=data)
+        datapath.send_msg(out)
 
-    events = [event.EventSwitchEnter,
+events = [event.EventSwitchEnter,
           event.EventSwitchLeave, event.EventPortAdd,
           event.EventPortDelete, event.EventPortModify,
           event.EventLinkAdd, event.EventLinkDelete]    
-        
-    
 
+
+def arp_handler(self, msg):
+    datapath = msg.datapath
+    ofproto = datapath.ofproto
+    parser = datapath.ofproto_parser
+    in_port = msg.match['in_port']
     
-                            
+    pkt = packet.Packet(msg.data)
+    eth = pkt.get_protocols(ethernet.ethernet)[0]
+    arp_pkt = pkt.get_protocol(arp.arp)
     
+    if eth:
+        eth_dst = eth.dst
+        eth_src = eth.src
+    
+    # Break the loop for avoiding ARP broadcast storm
+    if eth_dst == mac.BROADCAST_STR and arp_pkt:
+        arp_dst_ip = arp_pkt.dst_ip
+        if (datapath.id, eth_src, arp_dst_ip) in self.sw:
+            if self.sw[(datapath.id, eth_src, arp_dst_ip)] != in_port:
+                datapath.send_packet_out(in_port=in_port, actions=[])
+                return True
+            else:
+                self.sw[(datapath.id, eth_src, arp_dst_ip)] = in_port
+                
+    # Try to reply arp request
+    if arp_pkt:
+        hwtype = arp_pkt.hwtype
+        proto = arp_pkt.proto
+        hlen = arp_pkt.hlen
+        plen = arp_pkt.plen
+        opcode = arp_pkt.opcode
+        arp_src_ip = arp_pkt.src_ip
+        arp_dst_ip = arp_pkt.dst_ip
         
-        
-        
-        
-        
-        
-            
-            
-                            
-        
+        if opcode == arp.ARP_REQUEST:
+            if arp_dst_ip in self.arp_table:
+                actions = [parser.OFPActionOutput(in_port)]
+                ARP_Reply = packet.Packet()
+                
+                ARP_Reply.add_protocol(ethernet.ethernet(
+                    ethertype=eth.ethertype,
+                    dst=eth_src,
+                    src=self.arp_table[arp_dst_ip]))
+                ARP_Reply.add_protocol(arp.arp(
+                    opcode=arp.ARP_REPLY,
+                    src_mac=self.arp_table[arp_dst_ip],
+                    src_ip=arp_dst_ip,
+                    dst_mac=eth_src,
+                    dst_ip=arp_src_ip))
+                
+                ARP_Reply.serialize()
+                
+                out = parser.OFPPacketOut(
+                    datapath=datapath,
+                    buffer_id=ofproto.OFP_NO_BUFFER,
+                    in_port=ofproto.OFPP_CONTROLLER,
+                    actions=actions, data=ARP_Reply.data)
+                datapath.send_msg(out)
+                return True
+        return False
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+@set_ev_cls(events)
+def get_topology_data(self, ev):
+    print "get_topology_data() is called"
+    global myswitches, adjacency, datapath_list
+    switch_list = get_switch(self.topology_api_app, None)
+    myswitches = [switch.dp.id for switch in switch_list]
+    for switch in switch_list:
+        datapath_list[switch.dp.id] = switch.dp
+        # print "datapath_list=", datapath_list
+        print "myswitches=", myswitches
+        links_list = get_link(self.topology_api_app, None)
+        # print "links_list=", links_list
+        mylinks = [(link.src.dpid, link.dst.dpid, link.src.port_no, link.dst.port_no) for link in links_list]
+        for s1, s2, port1, port2 in mylinks:
+            # print "type(s1)=", type(s1), " type(port1)=", type(port1)
+            adjacency[s1][s2] = port1
+            adjacency[s2][s1] = port2
+            print s1, ":", port1, "<--->", s2, ":", port2
+
