@@ -1,0 +1,2 @@
+for i in range(32, 128, 32):
+  print(' '.join(chr(j) for j in range(i, i+32)))
