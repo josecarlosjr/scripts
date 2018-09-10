@@ -14,15 +14,11 @@
 # limitations under the License.
 
 from ryu.base import app_manager
-from ryu.controller import mac_to_port
-from ryu.controller import ofp_event
-from ryu.controller.handler import CONFIG_DISPATCHER, MAIN_DISPATCHER, DEAD_DISPATCHER
-from ryu.controller.handler import set_ev_cls
+from ryu.controller import mac_to_port, ofp_event
+from ryu.controller.handler import CONFIG_DISPATCHER, MAIN_DISPATCHER, DEAD_DISPATCHER, set_ev_cls
 from ryu.ofproto import ofproto_v1_3
 from ryu.lib.mac import haddr_to_bin
-from ryu.lib.packet import packet
-from ryu.lib.packet import ethernet
-from ryu.lib.packet import ether_types
+from ryu.lib.packet import packet, ethernet, ether_types
 from ryu.lib import mac
 from ryu.topology import event, switches
 from ryu.topology.api import get_switch, get_link, get_all_link, get_all_switch
@@ -35,7 +31,7 @@ from termcolor import colored
 import time, copy
 #import csv
 from ryu.lib.packet import arp, ipv6
-import arp_handler
+import arp_handler #arquivo externo arp_handler.py
 
 
 # switches
