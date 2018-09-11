@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
 # implied.
 # See the License for the specific language governing permissions and
-# limitations under the License.
+# limitations under the License
 
 from ryu.base import app_manager
 from ryu.controller import mac_to_port, ofp_event
