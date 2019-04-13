@@ -15,14 +15,12 @@ import functools #cria um decorator atraves do functools
 # ira chamar a funcao que roda func
 
 def my_decorator(func):
-    
-   @functools.wraps(func)
-   def function_that_runs_func():
-       
-       print("antes da funcao")#primeiro
-       func()
-       print("depois da funcao")#terceiro
-       return function_that_runs_func
+    @functools.wraps(func)
+    def function_that_runs_func():
+        print("antes da funcao")#primeiro
+        func()
+        print("depois da funcao")#terceiro
+        return function_that_runs_func
 
 
 #1- ao criar uma funcao com um
@@ -31,7 +29,6 @@ def my_decorator(func):
 
 @my_decorator
 def my_function():
-    
     print("my function")# segundo
    
 my_function()
